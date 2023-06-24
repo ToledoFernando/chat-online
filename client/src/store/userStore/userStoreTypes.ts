@@ -1,6 +1,6 @@
 export interface IUser {
   id: string | undefined;
-  name: string | undefined;
+  username: string | undefined;
   email: string | undefined;
   token: string | undefined;
   isLogin: boolean;

@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.topToBottom {
+  animation: topToBottom 0.7s forwards;
+}
+
+.bottomToTop {
+  animation: bottomToTop 0.7s forwards;
+}
+
+@keyframes topToBottom {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes bottomToTop {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}

@@ -82,7 +82,7 @@ function NavbarMovil({ userDataLog }: { userDataLog: IUser }) {
             ) : (
               <>
                 <li className="text-transparent font-semibold bg-gradient-to-tr bg-clip-text  from-red-400 to-red-600 px-2 py-1 rounded-full">
-                  <NavLink to="/login">Registrarse</NavLink>
+                  <NavLink to="/sigup">Registrarse</NavLink>
                 </li>
                 <li className="text-transparent font-semibold  bg-gradient-to-tr bg-clip-text from-red-400 to-red-600 px-2 py-1 rounded-full">
                   <NavLink to="/login">Iniciar Sesion</NavLink>

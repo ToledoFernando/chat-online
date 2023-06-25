@@ -24,7 +24,7 @@ function NavBar() {
 
   return (
     <header
-      className={`fixed w-full h-max bg-white z-50 transition-all duration-500 ${
+      className={`fixed w-full h-max bg-white dark:text-white z-50 transition-all duration-500 ${
         showShadow ? "shadow-lg" : ""
       }`}
     >
@@ -32,7 +32,6 @@ function NavBar() {
         <h1 className="text-3xl font-semibold">
           Chat <span className="font-semibold text-red-500">Online</span>
         </h1>
-
         <NavBarPC userDataLog={userDataLog} />
         <NavbarMovil userDataLog={userDataLog} />
       </nav>

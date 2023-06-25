@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { IUser } from "./userStoreTypes";
+import { IUser, IUserRegister } from "./userStoreTypes";
+import sendRequest from "../http/sendRequest";
 import jsCookie from "js-cookie";
 
 const useStore = create<IUser>((set) => ({
@@ -19,6 +20,10 @@ const useStore = create<IUser>((set) => ({
     } as IUser;
     set(user);
     return user;
+  },
+  createUser: async (data: IUserRegister) => {
+    const response = await sendRequest("POST", "/user/register", data);
+    return response;
   },
 }));
 

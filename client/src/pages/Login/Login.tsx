@@ -1,7 +1,12 @@
+import LoginForm from "../../components/Login/LoginForm";
+import LoginLeft from "../../components/Login/LoginLeft";
+
 function LoginRegistrer() {
   return (
-    <main className="h-screen py-16">
-      <h1 className="text-3xl">Login page</h1>
+    <main className="h-screen py-16 flex justify-around items-center">
+      <LoginLeft />
+      <LoginForm />
+      <img src="/wave.svg" alt="wave" className="-z-10 absolute bottom-0" />
     </main>
   );
 }

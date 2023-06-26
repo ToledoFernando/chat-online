@@ -1,6 +1,6 @@
 function RegistroRight() {
   return (
-    <div className="w-7/12 flex flex-col justify-center items-center">
+    <div className="w-7/12 flex flex-col justify-center items-center max-md:hidden">
       <img
         src="/Chatting.svg"
         className="w-8/12 topToBottom"

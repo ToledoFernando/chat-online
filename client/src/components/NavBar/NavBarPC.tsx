@@ -1,9 +1,11 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import MyAcountNav from "./MyAcountNav";
 import { IUser } from "../../store/userStore/userStoreTypes";
+import useStore from "../../store/userStore/userStore";
 
 function NavBarPC({ userDataLog }: { userDataLog: IUser }) {
-  const navigate = useNavigate();
+  const userData = useStore((state) => state);
+
   return (
     <ul className="flex gap-4 items-center max-[880px]:hidden">
       <li>
@@ -12,12 +14,17 @@ function NavBarPC({ userDataLog }: { userDataLog: IUser }) {
       <li>
         <NavLink to="/about">Sobre</NavLink>
       </li>
+      <li>
+        <NavLink to="/contact">Contacto</NavLink>
+      </li>
+      {userData.isLogin && (
+        <li>
+          <NavLink to="/web">Web</NavLink>
+        </li>
+      )}
       {userDataLog.isLogin ? (
         <div>
-          <div
-            onClick={() => navigate("/myaccount")}
-            className="group relative cursor-pointer"
-          >
+          <div className="group relative cursor-pointer">
             <MyAcountNav />
           </div>
         </div>

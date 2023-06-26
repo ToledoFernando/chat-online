@@ -76,7 +76,7 @@ const sendRequest = async (
 
     return { status, response } as IHttpResponse;
   } catch (error: AxiosError | any) {
-    status = error.response.status || 400;
+    status = error.response.status | 400;
     response =
       error.response.data.error || error.response.data || error.message;
     return { status, error: response } as IHttpResponse;

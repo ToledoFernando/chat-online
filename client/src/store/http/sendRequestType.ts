@@ -23,5 +23,5 @@ export enum HttpMetod {
 export interface IHttpResponse {
   status: number;
   error?: string;
-  data?: any;
+  response?: any;
 }

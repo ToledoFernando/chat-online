@@ -1,4 +1,4 @@
-import { FormEventHandler, useState } from "react";
+import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { IUserForm, IUserFormError, IUserFormState } from "./RegistroTypes";
 import { IUserRegister } from "../../store/userStore/userStoreTypes";
 import useStore from "../../store/userStore/userStore";
@@ -59,7 +59,7 @@ function RegistroForm() {
     setFormError(false);
   };
 
-  const handleChange: FormEventHandler<HTMLFormElement> = (e) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target as HTMLInputElement;
     setRegisterForm({ ...registerform, [name]: value });
     checkLength({ ...registerform, [name]: value });
@@ -87,7 +87,8 @@ function RegistroForm() {
           if (result.error != null) {
             return reject(result.error);
           }
-          return resolve(result.data);
+          setRegisterForm(initialValues);
+          return resolve(result.response);
         }),
         {
           pending: "Porfavor espere....",
@@ -98,6 +99,7 @@ function RegistroForm() {
           },
           error: {
             render(props: ToastContentProps<unknown>): any {
+              // setRegisterForm(initialValues);
               return props.data;
             },
           },
@@ -107,9 +109,8 @@ function RegistroForm() {
   };
 
   return (
-    <div className="w-6/12 h-full flex items-center justify-center">
+    <div className="w-6/12 max-xl:w-7/12 max-lg:w-8/12 max-md:w-full h-full flex items-center justify-center">
       <form
-        onChange={handleChange}
         onSubmit={handleSubmit}
         className="bg-white h-max flex bottomToTop flex-col gap-4 justify-around shadow-lg rounded-lg px-8 shadow-zinc-400 py-10 pt-14 w-10/12"
       >
@@ -121,6 +122,8 @@ function RegistroForm() {
               name="firstname"
               className="outline-none w-full border-b-2"
               placeholder="Nombre"
+              value={registerform.firstname}
+              onChange={handleChange}
             />
           </div>
           <div className="w-full flex flex-col">
@@ -130,6 +133,8 @@ function RegistroForm() {
               name="lastname"
               className="outline-none border-b-2"
               placeholder="Apellido"
+              value={registerform.lastname}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -140,6 +145,8 @@ function RegistroForm() {
             name="username"
             className="outline-none border-b-2"
             placeholder="Username"
+            value={registerform.username}
+            onChange={handleChange}
           />
         </div>
         <div className="mb-4 flex flex-col">
@@ -149,6 +156,8 @@ function RegistroForm() {
             name="email"
             className="outline-none border-b-2"
             placeholder="Email"
+            value={registerform.email}
+            onChange={handleChange}
           />
           <label>{errorFormMSG.email}</label>
         </div>
@@ -157,15 +166,19 @@ function RegistroForm() {
           <input
             type="password"
             name="password"
-            className="border-b-2"
+            className="border-b-2 outline-none"
             placeholder="Contraseña"
+            value={registerform.password}
+            onChange={handleChange}
           />
           <label>Repetir contraseña</label>
           <input
             type="password"
             name="verifyPassword"
-            className="border-b-2"
+            className="border-b-2 outline-none"
             placeholder="Contraseña"
+            value={registerform.verifyPassword}
+            onChange={handleChange}
           />
         </div>
         <div className="text-center pt-5">

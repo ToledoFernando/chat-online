@@ -1,12 +1,22 @@
 import { useState } from "react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
 import { GrClose } from "react-icons/gr";
 import { IUser } from "../../store/userStore/userStoreTypes";
+import useStore from "../../store/userStore/userStore";
 
 function NavbarMovil({ userDataLog }: { userDataLog: IUser }) {
   const [viewbar, setViewBar] = useState(false);
+
+  const navigate = useNavigate();
+  const userData = useStore((state) => state);
+
+  const cerrarSesion = () => {
+    userData.closeSesion();
+    setViewBar(false);
+    navigate("/");
+  };
 
   return (
     <div className="max-[880px]:visible min-[880px]:hidden">
@@ -42,6 +52,13 @@ function NavbarMovil({ userDataLog }: { userDataLog: IUser }) {
                 Contacto
               </NavLink>
             </li>
+            {userData.isLogin && (
+              <li>
+                <NavLink onClick={() => setViewBar(false)} to="/web">
+                  Web
+                </NavLink>
+              </li>
+            )}
             {userDataLog.isLogin ? (
               <div className="w-full">
                 <hr className="mb-3 w-full" />
@@ -60,12 +77,7 @@ function NavbarMovil({ userDataLog }: { userDataLog: IUser }) {
                     </NavLink>
                   </li>
                   <li className="hover:bg-slate-50 px-2 py-2 mb-5">
-                    <NavLink
-                      onClick={() => setViewBar(false)}
-                      to="/myacount/logout"
-                    >
-                      Cerrar Sesion
-                    </NavLink>
+                    <button onClick={cerrarSesion}>Cerrar Sesion</button>
                   </li>
                   <hr />
                   <li className="text-transparent mt-5 w-full text-sm py-2 bg-gradient-to-tr bg-clip-text from-red-400 to-red-600  rounded-full">
@@ -82,10 +94,14 @@ function NavbarMovil({ userDataLog }: { userDataLog: IUser }) {
             ) : (
               <>
                 <li className="text-transparent font-semibold bg-gradient-to-tr bg-clip-text  from-red-400 to-red-600 px-2 py-1 rounded-full">
-                  <NavLink to="/sigup">Registrarse</NavLink>
+                  <NavLink to="/sigup" onClick={() => setViewBar(false)}>
+                    Registrarse
+                  </NavLink>
                 </li>
                 <li className="text-transparent font-semibold  bg-gradient-to-tr bg-clip-text from-red-400 to-red-600 px-2 py-1 rounded-full">
-                  <NavLink to="/login">Iniciar Sesion</NavLink>
+                  <NavLink to="/login" onClick={() => setViewBar(false)}>
+                    Iniciar Sesion
+                  </NavLink>
                 </li>
               </>
             )}

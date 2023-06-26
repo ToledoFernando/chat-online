@@ -192,6 +192,8 @@ export const checkAcountToken = async (req: Request, res: Response) => {
       token: token,
     };
 
+    await t.commit();
+
     return sendSuccessResponse(res, 200, {
       msg: HttpSuccess.login,
       user: dataResponde,

@@ -14,5 +14,6 @@ export interface IUserModel {
   banned: boolean;
   listUseLock: string[];
   rolId?: string;
+  socketId: string;
 }
 export interface IModelUser extends Model<IUserModel>, IUserModel {}

@@ -33,4 +33,6 @@ export interface IUser extends ICookieUser {
   loginUser: (data: IUserLogin) => Promise<IHttpResponse>;
 
   setCookieUser: (data: ICookieUser) => void;
+
+  clearCookies: () => void;
 }

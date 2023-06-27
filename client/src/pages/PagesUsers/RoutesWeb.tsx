@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import jsCoockie from "js-cookie";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import userStore from "../../store/userStore/userStore";
+import Web from "./Home/Web";
 
 function RoutesWeb() {
   const navigate = useNavigate();
@@ -25,9 +26,8 @@ function RoutesWeb() {
     <>
       <Routes>
         <Route>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<Web />} />
           <Route path="dash" element={<h1>Dash</h1>} />
-          <Route path="xd" element={<h1>xd</h1>} />
         </Route>
       </Routes>
     </>

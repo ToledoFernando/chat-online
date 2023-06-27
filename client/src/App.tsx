@@ -5,17 +5,34 @@ import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Registro from "./pages/Registro/Registro";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import VerifyPage from "./pages/Verify/VerifyPage";
 import userStore from "./store/userStore/userStore";
 import RoutesWeb from "./pages/PagesUsers/RoutesWeb";
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+export const socket = io("http://localhost:4000");
 
 function App() {
+  const navigate = useNavigate();
   const userData = userStore((state) => state);
 
   useEffect(() => {
     userData.checkUserLogin();
+
+    socket.on("user-conected-chane", () => {
+      userData.clearCookies();
+      navigate("/login");
+      toast.info("Se detecto otro inicio de Sesion...", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    });
+
+    socket.on("user-conected-chane-apply", (data) =>
+      userData.setCookieUser(data)
+    );
   }, []);
 
   return (

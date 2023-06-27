@@ -7,6 +7,7 @@ import {
 } from "./userStoreTypes";
 import sendRequest from "../http/sendRequest";
 import jsCookie from "js-cookie";
+import { socket } from "../../App";
 
 // Funcion para insertar cookies
 function insertCookies(data: ICookieUser) {
@@ -60,7 +61,6 @@ const useStore = create<IUser>((set) => ({
         null,
         token as string
       );
-      console.log(response);
       if (response.error) {
         const userStatus = deleteCookies();
         set(userStatus);
@@ -70,6 +70,8 @@ const useStore = create<IUser>((set) => ({
       deleteCookies();
 
       const userStatus = insertCookies(response.response.user);
+      socket.emit("user-connected", userStatus.id);
+
       set(userStatus);
 
       return response;
@@ -79,8 +81,14 @@ const useStore = create<IUser>((set) => ({
     }
   },
 
+  clearCookies: () => {
+    const userStatus = deleteCookies();
+    set(userStatus);
+  },
+
   closeSesion: () => {
     const userStatus = deleteCookies();
+    socket.emit("user-disconnected");
     set(userStatus);
   },
 

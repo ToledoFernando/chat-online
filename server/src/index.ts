@@ -2,18 +2,17 @@ import express from "express";
 import { database } from "./db/pgdb";
 import { mongoConn } from "./db/mongodb";
 import cors from "cors";
-import { Roles, RolesId } from "./models/Roles/RolesTypes";
 import morgan from "morgan";
 import route from "./routes/routes";
-
-const app = express();
+import { serverHttp, app } from "./handlers/Handler";
+import { Roles, RolesId } from "./models/Roles/RolesTypes";
 
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(route);
 
-app.listen(4000, async () => {
+serverHttp.listen(4000, async () => {
   try {
     const mongoDB = await mongoConn();
     console.log(mongoDB);

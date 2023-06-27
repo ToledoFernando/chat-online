@@ -60,4 +60,8 @@ export default (database: Sequelize) =>
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
     },
+    socketId: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+    },
   });

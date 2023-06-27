@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { IFormLogin, ILoginError } from "./LoginType";
 import userStore from "../../store/userStore/userStore";
 import { toast, ToastContentProps } from "react-toastify";
+import { socket } from "../../App";
 
 const initialValue = {
   email: "",
@@ -48,7 +49,7 @@ function LoginForm() {
       new Promise(async (resolve, reject) => {
         const result = await userData.loginUser(formData);
         if (result.error != null) {
-          return reject(result.error);
+          return reject(result);
         }
         userData.setCookieUser(result.response.user);
         setFormData(initialValue);
@@ -58,12 +59,31 @@ function LoginForm() {
         pending: "Porfavor espere....",
         success: {
           render(props: ToastContentProps<unknown | any>): any {
+            socket.emit("user-connected", props.data.user.id);
             return props.data.msg;
           },
         },
         error: {
-          render(props: ToastContentProps<unknown>): any {
-            return props.data;
+          render(props: ToastContentProps<unknown | any>): any {
+            console.log(props.data);
+            if (props.data.status == 404)
+              toast.warning("¿Cerrar la otra Sesion?", {
+                position: toast.POSITION.TOP_RIGHT,
+                closeButton: (
+                  <button
+                    className="font-bold"
+                    onClick={() =>
+                      socket.emit(
+                        "user-change-conection",
+                        props.data.error.userID
+                      )
+                    }
+                  >
+                    Cerrar
+                  </button>
+                ),
+              });
+            return props.data.error.error;
           },
         },
       }

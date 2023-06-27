@@ -4,6 +4,7 @@ import { database } from "../../db/pgdb";
 import { RolesId } from "../../models/Roles/RolesTypes";
 import bcrypt from "bcryptjs";
 import { sendErrorResponse, sendSuccessResponse } from "../response";
+import { Op } from "sequelize";
 import {
   codificarCorreoElectronico,
   decodificarCorreoElectronico,
@@ -133,6 +134,14 @@ export const userLogin = async (req: Request, res: Response) => {
       return sendErrorResponse(res, 401, HttpErrors.userNotVerify);
     }
 
+    if (userDB.connected === "online") {
+      await t.rollback();
+      return sendErrorResponse(res, 404, {
+        error: HttpErrors.twoConnection,
+        userID: userDB.id,
+      });
+    }
+
     const dataToken = {
       id: userDB.id,
       username: userDB.username,
@@ -200,6 +209,26 @@ export const checkAcountToken = async (req: Request, res: Response) => {
     });
   } catch (error: unknown | any) {
     await t.rollback();
+    return sendErrorResponse(res, 400, error.message);
+  }
+};
+
+export const searchUser = async (req: Request, res: Response) => {
+  const t = database.transaction();
+  try {
+    const { search_name } = req.params;
+    console.log(search_name);
+    const resuts = await users.findAll({
+      where: {
+        username: {
+          [Op.iLike]: `%${search_name}%`,
+        },
+      },
+      attributes: { exclude: ["password", "lastName", "socketId"] },
+    });
+    return sendSuccessResponse(res, 200, resuts);
+  } catch (error: unknown | any) {
+    (await t).rollback();
     return sendErrorResponse(res, 400, error.message);
   }
 };

@@ -13,7 +13,6 @@ const sendRequest = async (
 
   try {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
     switch (Metod) {
       case HttpMetod.GET:
         const responseGET: AxiosResponse = await axios.get(API_KEY + URL, {

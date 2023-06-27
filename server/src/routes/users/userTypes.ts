@@ -16,6 +16,7 @@ export enum HttpErrors {
   emailInvalid = "Email invalido",
   userNotVerify = "Usuario no verificado",
   missingData = "Faltan Datos",
+  twoConnection = "Ya existe una conexion activa",
 }
 
 /**

@@ -19,7 +19,7 @@ serverHttp.listen(4000, async () => {
     // await database.sync({ force: true });
     await database.sync();
 
-    // await database.models.rol.bulkCreate([
+    // await database.models.Rol.bulkCreate([
     //   { id: RolesId.ADMIN, name: Roles.ADMIN },
     //   { id: RolesId.USER, name: Roles.USER },
     //   { id: RolesId.BANNED, name: Roles.BANNED },

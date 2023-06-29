@@ -65,25 +65,31 @@ function LoginForm() {
         },
         error: {
           render(props: ToastContentProps<unknown | any>): any {
-            console.log(props.data);
             if (props.data.status == 404)
-              toast.warning("¿Cerrar la otra Sesion?", {
-                position: toast.POSITION.TOP_RIGHT,
-                closeButton: (
-                  <button
-                    className="font-bold"
-                    onClick={() =>
-                      socket.emit(
-                        "user-change-conection",
-                        props.data.error.userID
-                      )
-                    }
-                  >
-                    Cerrar
-                  </button>
-                ),
-              });
-            return props.data.error.error;
+              return (
+                <div>
+                  Sesion iniciada en otro dispositivo.{" "}
+                  {toast.warning("¿Cerrar la otra Sesion?", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    closeButton: (
+                      <button
+                        className="font-bold"
+                        onClick={() =>
+                          socket.emit(
+                            "user-change-conection",
+                            props.data.error.userID
+                          )
+                        }
+                      >
+                        Cerrar
+                      </button>
+                    ),
+                  })}
+                </div>
+              );
+            else {
+              return props.data.error;
+            }
           },
         },
       }

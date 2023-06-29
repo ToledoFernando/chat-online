@@ -23,7 +23,7 @@ export enum HttpErrors {
  * @description Enum para los codigos de exito HTTP en la ruta de usuario
  */
 export enum HttpSuccess {
-  create = "usuario creado con exito, se envio un correo para que verifique su cuenta",
-  login = "usuario logueado con exito",
-  verify = "usuario verificado con exito",
+  create = "Usuario creado con exito, se envio un correo para que verifique su cuenta",
+  login = "Usuario logueado con exito",
+  verify = "¡Usuario verificado con exito!",
 }

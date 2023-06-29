@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { IUserSearch } from "./CardListTypes";
+import { IUser } from "../../../store/webStore/webStoreTypes";
 
-function CardUserNew({ user }: { user: IUserSearch }) {
+function CardUserNew({ user }: { user: IUser }) {
   const navigate = useNavigate();
-  console.log(user);
 
   const changeName = (name: string): string => {
     let nombres = name.split(" ");

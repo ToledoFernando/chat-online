@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import { IMessageModel } from "./MessagesTypes";
 
 export default (database: Sequelize) => {
-  database.define<IMessageModel>("messages", {
+  database.define<IMessageModel>("Messages", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,

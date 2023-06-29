@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import { IRolesModel } from "./RolesTypes";
 
 export default (database: Sequelize) =>
-  database.define<IRolesModel>("rol", {
+  database.define<IRolesModel>("Rol", {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,

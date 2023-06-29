@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import { IModelUser } from "./UserAcoutnTypes";
 
 export default (database: Sequelize) =>
-  database.define<IModelUser>("users", {
+  database.define<IModelUser>("Users", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,

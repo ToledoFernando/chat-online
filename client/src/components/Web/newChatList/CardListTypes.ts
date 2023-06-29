@@ -1,6 +1,7 @@
 export interface IUserSearch {
   id: string;
   firstName: string;
+  lastName: string;
   username: string;
   email: string;
   profileIMG: string;
@@ -8,8 +9,6 @@ export interface IUserSearch {
   connected: string;
   lastConnection: number;
   banned: boolean;
-  listUseLock: any[];
-  createdAt: string;
-  updatedAt: string;
-  rolId: string;
+  socketId: string;
+  RolId: string;
 }

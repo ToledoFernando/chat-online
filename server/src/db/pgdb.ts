@@ -15,11 +15,13 @@ defineModelUsers(database);
 defineModelChats(database);
 defineModelMessages(database);
 
-const { rol, users, chats, messages } = database.models;
+const { Rol, Users, Chats, Messages } = database.models;
 
-rol.hasMany(users);
-chats.hasMany(messages);
-users.belongsToMany(chats, { through: "chat_user" });
-chats.belongsToMany(users, { through: "chat_user" });
+Rol.hasMany(Users);
+Chats.hasMany(Messages);
+// users.belongsToMany(chats, { through: "chat_user" });
+// chats.belongsToMany(users, { through: "chat_user" });
+Chats.belongsTo(Users, { foreignKey: "userId1", as: "user1" });
+Chats.belongsTo(Users, { foreignKey: "userId2", as: "user2" });
 
 export { database };

@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import {
   changeConection,
+  createNewMessage,
   userConnected,
   userDisconnected,
 } from "./handlersControllers";
@@ -22,6 +23,10 @@ io.on("connection", (socket) => {
 
   socket.on("user-change-conection", (data) =>
     changeConection(socket, data, io)
+  );
+
+  socket.on("newMessage", (data, callback) =>
+    createNewMessage(socket, data, io, callback)
   );
 
   socket.on("user-disconnected", () => userDisconnected(socket, io));

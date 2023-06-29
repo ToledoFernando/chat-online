@@ -13,14 +13,20 @@ function VerifyPage() {
 
   useEffect(() => {
     if (code) {
-      userData.verifyUser(code).then((response) => {
-        console.log(response);
-        if (response.error) {
+      userData
+        .verifyUser(code)
+        .then((response) => {
+          if (response.error) {
+            setError(true);
+            toast.error(response.error);
+          } else toast.success(response.response);
+          setLoad(false);
+        })
+        .catch((error: unknown | any) => {
           setError(true);
-          toast.error(response.error);
-        } else toast.success("Account verified");
-        setLoad(false);
-      });
+          toast.error("Ocurri un error al realizar la peticion.");
+          setLoad(false);
+        });
     }
   }, []);
 

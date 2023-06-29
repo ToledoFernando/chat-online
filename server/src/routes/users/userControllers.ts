@@ -15,17 +15,19 @@ import { IUserModel } from "../../models/Users/UserAcoutnTypes";
 import { generateToken } from "../../jwt/authMiddleware";
 import { IUser } from "../../jwt/authMiddlewareTypes";
 
-const { users } = database.models;
+const { Users } = database.models;
 
 export const register = async (req: Request, res: Response) => {
   const t = await database.transaction();
   try {
     const { email, firstName, lastName, password, username } =
       req.body as IUserRegister;
-    if (!email || !firstName || !lastName || !password || !username)
+    if (!email || !firstName || !lastName || !password || !username) {
+      await t.rollback();
       return sendErrorResponse(res, 422, HttpErrors.missingData);
+    }
 
-    const checkEmailUser = (await users.findOne({
+    const checkEmailUser = (await Users.findOne({
       where: { email: email },
       transaction: t,
     })) as IUser | null;
@@ -38,7 +40,7 @@ export const register = async (req: Request, res: Response) => {
     //Hash de contraseña con bcrypt
     const hashPassword = bcrypt.hashSync(password, 10);
 
-    const newUser = await users.findOrCreate({
+    const newUser = await Users.findOrCreate({
       where: { username: username },
       defaults: {
         email,
@@ -46,7 +48,7 @@ export const register = async (req: Request, res: Response) => {
         lastName,
         password: hashPassword,
         username,
-        rolId: RolesId.USER,
+        RolId: RolesId.USER,
         lastConnection: Math.floor(Date.now() / 1000),
       },
       transaction: t,
@@ -81,13 +83,12 @@ export const verifyUser = async (req: Request, res: Response) => {
     const code: string | undefined = req.params.code;
     if (!code) {
       await t.rollback();
-
       return sendErrorResponse(res, 422, HttpErrors.missingData);
     }
 
     const email = decodificarCorreoElectronico(code);
 
-    const userDB = await users.findOne({ where: { email } });
+    const userDB = await Users.findOne({ where: { email }, transaction: t });
 
     if (!userDB) {
       await t.rollback();
@@ -95,7 +96,10 @@ export const verifyUser = async (req: Request, res: Response) => {
     }
 
     const result = await userDB.update({ verify: true });
-    if (!result) return sendErrorResponse(res, 404, HttpErrors.userNotFount);
+    if (!result) {
+      await t.rollback();
+      return sendErrorResponse(res, 404, HttpErrors.userNotFount);
+    }
 
     await t.commit();
     return sendSuccessResponse(res, 200, HttpSuccess.verify);
@@ -110,14 +114,15 @@ export const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const userDB = (await users.findOne({
+    const userDB = (await Users.findOne({
       where: { email },
+      transaction: t,
     })) as IUserModel | null;
 
     if (!userDB) {
       // si no se encontro un usuario
       await t.rollback();
-      return sendErrorResponse(res, 404, HttpErrors.userNotFount);
+      return sendErrorResponse(res, 401, HttpErrors.userNotFount);
     }
 
     const checkPassword = bcrypt.compareSync(password, userDB.password);
@@ -159,6 +164,8 @@ export const userLogin = async (req: Request, res: Response) => {
       token: token,
     };
 
+    await t.commit();
+
     return sendSuccessResponse(res, 200, {
       msg: HttpSuccess.login,
       user: dataResponde,
@@ -174,8 +181,9 @@ export const checkAcountToken = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
 
-    const userDB = (await users.findOne({
+    const userDB = (await Users.findOne({
       where: { id },
+      transaction: t,
     })) as IUserModel | null;
 
     if (!userDB) {
@@ -214,21 +222,22 @@ export const checkAcountToken = async (req: Request, res: Response) => {
 };
 
 export const searchUser = async (req: Request, res: Response) => {
-  const t = database.transaction();
+  const t = await database.transaction();
   try {
     const { search_name } = req.params;
-    console.log(search_name);
-    const resuts = await users.findAll({
+    const resuts = await Users.findAll({
       where: {
         username: {
           [Op.iLike]: `%${search_name}%`,
         },
       },
+      transaction: t,
       attributes: { exclude: ["password", "lastName", "socketId"] },
     });
+    await t.commit();
     return sendSuccessResponse(res, 200, resuts);
   } catch (error: unknown | any) {
-    (await t).rollback();
+    await t.rollback();
     return sendErrorResponse(res, 400, error.message);
   }
 };

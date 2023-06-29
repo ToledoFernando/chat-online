@@ -23,7 +23,7 @@ export const authMiddleware = (
     const token = getheader.split(" ")[1];
 
     const user = jwt.verify(token, JWT_SECRET) as IUser;
-    req.body = user;
+    req.body = { ...req.body, id: user.id };
     next();
   } catch (error: unknown | any) {
     res.status(400).json({ error: error.message });

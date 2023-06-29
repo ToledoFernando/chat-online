@@ -6,7 +6,7 @@ import webStore from "../../../store/webStore/webStore";
 import jscookie from "js-cookie";
 import { toast } from "react-toastify";
 import { socket } from "../../../App";
-import { IMensajes } from "../../../store/webStore/webStoreTypes";
+import { IMensajes, Meses } from "../../../store/webStore/webStoreTypes";
 
 function ChatComponent() {
   const { search } = useLocation();
@@ -25,25 +25,24 @@ function ChatComponent() {
     const dataMessage = {
       from: userData.id,
       to: webData.chatActual.id,
-      msg_content: message,
+      msg_content: message.replace(/\n/g, "<br />"),
       isFile: false,
       type: "text",
       ChatId: chatID,
       timestamp: unixTimestamp,
     };
 
-    socket.emit("newMessage", dataMessage, (data: IMensajes) =>
-      setMensajesHistorial([...mensajesHistorial, data])
-    );
-    if (divMessages.current) {
-      divMessages.current.scrollTop = divMessages.current.scrollHeight;
-    }
+    socket.emit("newMessage", dataMessage, (data: IMensajes) => {
+      webData.setNewMessage(data);
+      if (divMessages.current) {
+        divMessages.current.scrollTop = divMessages.current.scrollHeight;
+      }
+    });
   };
 
   //===== Hace una peticion para saber si existe el chat o crea uno nuevo //
   useEffect(() => {
     if (userData.id) {
-      console.log("Chat iniciado");
       const searchOrCreate = {
         user1: userData.id,
         user2: search.split("=")[1],
@@ -64,27 +63,60 @@ function ChatComponent() {
     }
   }, [search, userData.id, chatID]);
 
+  //evento para traer los nuevos mensajes y los mensajes anterires
   useEffect(() => {
     if (chatID.length > 0) {
+      //Escuchar evento de nuevo mensajes
+      socket.on("new-message", (data: IMensajes) => {
+        webData.setNewMessage(data);
+      });
+
+      //Traer mensajes anteriores
       const token = jscookie.get("user_token") as string;
       webData
         .getMessages(chatID, token)
         .then((response) => {
           setMensajesHistorial(response.response);
-          if (divMessages.current) {
-            divMessages.current.scrollTop = divMessages.current.scrollHeight;
-          }
         })
         .catch((err: unknown | any) => toast.error(err.message));
     }
+
+    return webData.clearMessages();
   }, [chatID]);
 
-  socket.on("new-message", (data: IMensajes) => {
-    setMensajesHistorial([...mensajesHistorial, data]);
+  //Cada vez que llega un mensaje nuevo, el scroll baja automaticamente
+  useEffect(() => {
     if (divMessages.current) {
       divMessages.current.scrollTop = divMessages.current.scrollHeight;
     }
-  });
+  }, [webData.messages]);
+
+  const getTimestamp = (time: number) => {
+    //fecha del mensaje y fecha actual
+    const currentDate = new Date();
+    const date = new Date(time * 1000);
+
+    //Dia y mes actual
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    //dia y mes del mensaje
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    //hora y minuto del mensaje
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    if (month < currentMonth || (month === currentMonth && day < currentDay)) {
+      console.log("La fecha es menor a la fecha actual.");
+      return `${day}/${Meses[month]} - ${hours}:${
+        minutes < 10 ? "0" + minutes : minutes
+      }`;
+    } else {
+      return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
+    }
+  };
 
   return (
     <div className="w-full h-full  flex flex-col py-2 px-2 justify-end">
@@ -92,23 +124,34 @@ function ChatComponent() {
         className="w-full h-5/6 flex py-5 flex-col gap-4 overflow-y-auto"
         ref={divMessages}
       >
-        {mensajesHistorial.map((mensaje) => {
-          console.log(mensaje);
+        {webData.messages.map((mensaje, index) => {
           return (
             <div
-              key={mensaje.id}
-              className={`w-full h-max px-2 py-1 mt-3 rounded-lg`}
+              key={index}
+              className="w-full relative h-max px-2 py-1 mt-3 rounded-lg"
             >
               {mensaje.user_id === userData.id ? (
                 <p className="text-zinc-800">
-                  <span className="bg-gradient-to-tr from-red-300 to-red-200 text-zinc-700 font-semibold p-4 rounded-xl rounded-tl-none">
-                    {mensaje.msg_content}
+                  <span className="bg-gradient-to-tr w-max max-w-md h-max block from-red-300 to-red-200 text-zinc-700 font-semibold p-4 rounded-xl rounded-tl-none">
+                    <label className="absolute -bottom-2 left-4 text-[8px] text-zinc-500">
+                      {getTimestamp(mensaje.timestamp)}
+                    </label>
+                    <label
+                      className="text-zinc-700 font-semibold"
+                      dangerouslySetInnerHTML={{ __html: mensaje.msg_content }}
+                    ></label>
                   </span>
                 </p>
               ) : (
-                <p className="text-zinc-800 text-right  ">
-                  <span className="bg-gradient-to-tr from-red-300 to-red-500 text-white font-semibold p-4 rounded-xl rounded-tr-none">
-                    {mensaje.msg_content}
+                <p className="text-zinc-800 text-right flex justify-end">
+                  <span className="bg-gradient-to-tr w-max max-w-md h-max block from-red-300 to-red-500 text-white font-semibold p-4 rounded-xl rounded-tr-none">
+                    <label className="absolute -bottom-2 right-4 text-[8px] text-zinc-500">
+                      {getTimestamp(mensaje.timestamp)}
+                    </label>
+                    <label
+                      className="text-white font-semibold"
+                      dangerouslySetInnerHTML={{ __html: mensaje.msg_content }}
+                    ></label>
                   </span>
                 </p>
               )}
@@ -116,16 +159,18 @@ function ChatComponent() {
           );
         })}
       </div>
-      <form className="flex justify-between w-full h-10" onSubmit={sendMessage}>
-        <input
-          type="text"
+      <form
+        className="flex justify-between items-center w-full max-h-32 min-h-10"
+        onSubmit={sendMessage}
+      >
+        <textarea
           onChange={(e) => setMessage(e.target.value)}
           value={message}
           placeholder="Escribir un mensaje"
-          className="w-11/12 px-4 rounded-lg outline-none border-b-2 border-zinc-300 shadow-lg shadow-zinc-500"
-        />
+          className="w-11/12 px-4 rounded-lg max-h-32 min-h-32 h-full resize-none outline-none border-b-2 border-zinc-300 shadow-lg shadow-zinc-500"
+        ></textarea>
         <button
-          className="w-max px-3 rounded-full bg-gradient-to-tr from-red-400 to-red-500 text-white"
+          className="w-max px-3 h-10 rounded-full bg-gradient-to-tr from-red-400 to-red-500 text-white"
           type="submit"
         >
           <BiSolidSend className="invert" />

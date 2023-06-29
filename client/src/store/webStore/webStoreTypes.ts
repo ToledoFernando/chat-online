@@ -1,5 +1,20 @@
 import { IHttpResponse } from "../http/sendRequestType";
 
+export enum Meses {
+  Ene = 1,
+  Feb,
+  Mar,
+  Abr,
+  May,
+  Jun,
+  Jul,
+  Ago,
+  Sep,
+  Oct,
+  Nov,
+  Dic,
+}
+
 export interface IChat {
   id: string;
   lastMessage: any;
@@ -47,6 +62,8 @@ export interface IMensajes {
 export interface IWebStore {
   chats: IChat[];
 
+  messages: IMensajes[];
+
   chatActual: IUser;
 
   searchUsers: IUser[];
@@ -64,4 +81,8 @@ export interface IWebStore {
   setChatActual: (userData: IUser) => void;
 
   getMessages: (chatID: string, token: string) => Promise<IHttpResponse>;
+
+  setNewMessage: (msg: IMensajes) => void;
+
+  clearMessages: () => void;
 }

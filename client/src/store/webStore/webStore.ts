@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { IUser, IUsersChat, IWebStore } from "./webStoreTypes";
+import { IMensajes, IUser, IUsersChat, IWebStore } from "./webStoreTypes";
 import sendRequest from "../http/sendRequest";
 import jscookie from "js-cookie";
 
@@ -9,6 +9,8 @@ const webStore = create<IWebStore>((set) => ({
   chatActual: {} as IUser,
 
   searchUsers: [],
+
+  messages: [],
 
   setChats: () => {
     set({ chats: [] });
@@ -65,8 +67,18 @@ const webStore = create<IWebStore>((set) => ({
       null,
       token
     );
+    if (messages.error) return messages;
+    set({ messages: messages.response });
     return messages;
   },
+
+  setNewMessage: async (msg: IMensajes) => {
+    set((state) => {
+      return { messages: [...state.messages, msg] };
+    });
+  },
+
+  clearMessages: () => set({ messages: [] }),
 }));
 
 export default webStore;

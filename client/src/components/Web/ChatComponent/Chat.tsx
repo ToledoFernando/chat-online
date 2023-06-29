@@ -77,10 +77,16 @@ function Chat() {
               </div>
             )}
             <p className="absolute top-8 w-full text-center right-0 text-xs font-semibold text-zinc-400">
-              {webData.chatActual.connected}{" "}
-              {webData.chatActual.connected === "offline"
-                ? `| ${getTimeUnixFormat(webData.chatActual.lastConnection)}`
-                : null}
+              {webData.chatActual.connected === "offline" ? (
+                `offline | ${getTimeUnixFormat(
+                  webData.chatActual.lastConnection
+                )}`
+              ) : (
+                <label className="text-zinc-400 relative font-semibold">
+                  <span className="bg-green-500 absolute w-2 h-2 top-[5px] -left-3 rounded-full"></span>
+                  {webData.chatActual.connected}
+                </label>
+              )}
             </p>
             <button
               className="absolute top-2 right-2 bg-red-400 rounded-lg px-4 py-2 text-white"

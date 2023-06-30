@@ -3,9 +3,7 @@ dotenv.config();
 
 export const JWT_SECRET: string = process.env.JWT_SECRET || "key";
 
-export const POSTGRESQL =
-  (process.env.PSQL as string) ||
-  "postgres://postgres:123@localhost:5432/chatonline";
+export const POSTGRESQL = process.env.PSQL as string;
 
 export const MONGO_URI =
   (process.env.MGDB as string) || "mongodb://localhost:27017/chatonline";

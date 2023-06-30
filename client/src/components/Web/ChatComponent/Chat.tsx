@@ -8,7 +8,7 @@ function Chat() {
   const navigate = useNavigate();
   const { search } = useLocation();
   const webData = webStore((state) => state);
-  const [userAct, setUserAct] = useState<IUser>();
+  const [_, setUserAct] = useState<IUser>();
 
   const changeName = (name: string): string => {
     let nombres = name.split(" ");

@@ -1,11 +1,5 @@
 import { create } from "zustand";
-import {
-  IChat,
-  IMensajes,
-  IUser,
-  IUsersChat,
-  IWebStore,
-} from "./webStoreTypes";
+import { IMensajes, IUser, IUsersChat, IWebStore } from "./webStoreTypes";
 import sendRequest from "../http/sendRequest";
 import jscookie from "js-cookie";
 

@@ -2,12 +2,12 @@ import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { IMessage, IUserConnected } from "./HandlersTypes";
 import { database } from "../db/pgdb";
-import { Model } from "sequelize";
+import { Model, Op } from "sequelize";
 import { IUserModel } from "../models/Users/UserAcoutnTypes";
 import { IUser } from "../jwt/authMiddlewareTypes";
 import { generateToken } from "../jwt/authMiddleware";
 
-const { Users, Messages } = database.models;
+const { Users, Messages, Chats } = database.models;
 
 export const userConnected = async (
   socket: Socket<DefaultEventsMap, any>,
@@ -31,6 +31,57 @@ export const userConnected = async (
         transaction: t,
       }
     );
+    console.log("#####################################");
+    const chatsAll: any = await Chats.findAll({
+      where: {
+        [Op.or]: [{ userId1: userID }, { userId2: userID }],
+      },
+      include: [
+        {
+          model: Users,
+          as: "user1",
+          attributes: {
+            exclude: ["password", "listUseLock", "updatedAt", "createdAt"],
+          },
+        },
+        {
+          model: Users,
+          as: "user2",
+          attributes: {
+            exclude: ["password", "listUseLock", "updatedAt", "createdAt"],
+          },
+        },
+      ],
+      transaction: t,
+    });
+
+    for (let i = 0; i < chatsAll.length; i++) {
+      console.log("====================================");
+      console.log(`UserID 1: ${chatsAll[i].user1.id}`);
+      console.log(`UserID 2: ${chatsAll[i].user2.id}`);
+      console.log(`My ID: ${userID}`);
+      console.log("====================================");
+      if (
+        chatsAll[i].user1.id != userID &&
+        chatsAll[i].user1.connected == "online"
+      )
+        // para saber que usuario esta online
+        io.to(chatsAll[i].user1.socketId).emit(
+          "new-user-connected",
+          chatsAll[i].user1.id
+        );
+      else if (
+        chatsAll[i].user2.id != userID &&
+        chatsAll[i].user2.connected == "online"
+      )
+        // para saber que usuario esta online
+        io.to(chatsAll[i].user2.socketId).emit(
+          "new-user-connected",
+          chatsAll[i].user2.id
+        );
+    }
+    console.log("#####################################");
+
     await t.commit();
     io.to(socket.id).emit("user-conected", result as Model);
   } catch (error) {
@@ -130,7 +181,7 @@ export const createNewMessage = async (
       return;
     }
 
-    const newMessage = await Messages.create(
+    const newMessage: any = await Messages.create(
       {
         msg_content: data.msg_content,
         isFile: data.isFile,
@@ -140,6 +191,16 @@ export const createNewMessage = async (
         timestamp: data.timestamp,
       },
       {
+        transaction: t,
+      }
+    );
+
+    await Chats.update(
+      {
+        MessageId: newMessage.id,
+      },
+      {
+        where: { id: data.ChatId },
         transaction: t,
       }
     );

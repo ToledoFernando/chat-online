@@ -53,13 +53,13 @@ function LoginForm() {
         }
         userData.setCookieUser(result.response.user);
         setFormData(initialValue);
+        socket.emit("user-connected", result.response.user.id);
         return resolve(result.response);
       }),
       {
         pending: "Porfavor espere....",
         success: {
           render(props: ToastContentProps<unknown | any>): any {
-            socket.emit("user-connected", props.data.user.id);
             return props.data.msg;
           },
         },

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import webStore from "./store/webStore/webStore";
 
-export const socket = io("http://localhost:4000");
+export const socket = io(import.meta.env.VITE_API_URL);
 
 function App() {
   const navigate = useNavigate();

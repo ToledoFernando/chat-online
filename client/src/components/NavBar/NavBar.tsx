@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import userStore from "../../store/userStore/userStore";
 import NavBarPC from "./NavBarPC";
 import NavbarMovil from "./NavbarMovil";
+import { socket } from "../../App";
+import { toast } from "react-toastify";
 
 function NavBar() {
   const [showShadow, setShowShadow] = useState<boolean>(false);
@@ -14,6 +16,8 @@ function NavBar() {
       setScrollPosition(window.scrollY);
       setShowShadow(window.scrollY > 0);
     };
+
+    socket.on("new-user-connected", (data) => toast.success(data));
 
     window.addEventListener("scroll", handleScroll);
 

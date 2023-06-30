@@ -12,14 +12,14 @@ function RoutesWeb() {
   useEffect(() => {
     const token = jsCoockie.get("user_token");
     if (!token) navigate("/login");
-    userData
-      .checkUserLogin()
-      .then((response) => {
-        if (!response || response?.status !== 200) navigate("/login");
-      })
-      .catch(() => {
-        navigate("/login");
-      });
+    // userData
+    //   .checkUserLogin()
+    //   .then((response) => {
+    //     if (!response || response?.status !== 200) navigate("/login");
+    //   })
+    //   .catch(() => {
+    //     navigate("/login");
+    //   }); // HACE QUE SE ACTUALICE A PAGINA Y RECIBA 2 VECES EL EVENTO DE USUARIO CONECTADO
   }, []);
 
   return (

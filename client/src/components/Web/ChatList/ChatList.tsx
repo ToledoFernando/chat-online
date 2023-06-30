@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import webStore from "../../../store/webStore/webStore";
 // import { IChatCard } from "./ChatCardTypes";
 import ChatCard from "./ChatCard";
@@ -6,9 +6,9 @@ import ChatCard from "./ChatCard";
 function ChatList() {
   const webData = webStore((state) => state);
 
-  useEffect(() => {
-    webData.setChats();
-  }, []);
+  // useEffect(() => {
+  //   webData.setChats();
+  // }, []);
 
   return webData.chats.length === 0 ? (
     <div className="w-3/12 h-full flex flex-col -z-50 justify-center items-center ">
@@ -24,9 +24,9 @@ function ChatList() {
   ) : (
     <div className="w-3/12 relative h-full py-5 overflow-y-scroll">
       <div className="w-full h-max">
-        {webData.chats.map((chat, index) => (
-          <ChatCard chatCard={chat} key={index} />
-        ))}
+        {webData.chats.map((chat, index) => {
+          return <ChatCard chatCard={chat} key={index} />;
+        })}
       </div>
     </div>
   );

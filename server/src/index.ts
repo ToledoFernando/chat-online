@@ -16,14 +16,48 @@ serverHttp.listen(4000, async () => {
   try {
     const mongoDB = await mongoConn();
     console.log(mongoDB);
-    // await database.sync({ force: true });
-    await database.sync();
+    await database.sync({ force: true });
+    // await database.sync();
 
-    // await database.models.Rol.bulkCreate([
-    //   { id: RolesId.ADMIN, name: Roles.ADMIN },
-    //   { id: RolesId.USER, name: Roles.USER },
-    //   { id: RolesId.BANNED, name: Roles.BANNED },
-    // ]);
+    await database.models.Rol.bulkCreate([
+      { id: RolesId.ADMIN, name: Roles.ADMIN },
+      { id: RolesId.USER, name: Roles.USER },
+      { id: RolesId.BANNED, name: Roles.BANNED },
+    ]);
+
+    await database.models.Users.create({
+      id: "954a2308-8d0f-4791-bb0a-6dac5b33d050",
+      firstName: "toledo",
+      lastName: "fernando",
+      username: "123123",
+      email: "toledof764@gmail.com",
+      password: "$2a$10$WFc9cRyx5.j5kA.vXqwayOjQN1BAXiV9YexQFWF7G6iprEIuUZ0HO",
+      profileIMG: "",
+      verify: true,
+      connected: "offline",
+      lastConnection: 1688106084,
+      banned: false,
+      listUseLock: [],
+      socketId: "",
+      RolId: "915e22b1-3fa2-4804-b8d2-2c1d170fdf84",
+    });
+
+    await database.models.Users.create({
+      id: "954a2308-8d0f-4791-bb0a-6dac5b33d052",
+      firstName: "fernando",
+      lastName: "toledo",
+      username: "xdxdxdddd",
+      email: "123@gmail.com",
+      password: "$2a$10$WFc9cRyx5.j5kA.vXqwayOjQN1BAXiV9YexQFWF7G6iprEIuUZ0HO",
+      profileIMG: "",
+      verify: true,
+      connected: "offline",
+      lastConnection: 1688106084,
+      banned: false,
+      listUseLock: [],
+      socketId: "",
+      RolId: "915e22b1-3fa2-4804-b8d2-2c1d170fdf84",
+    });
 
     console.log(`Postgres is connected`);
     console.log(`Server on port 4000`);

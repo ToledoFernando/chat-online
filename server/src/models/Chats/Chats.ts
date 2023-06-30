@@ -9,10 +9,12 @@ export default (database: Sequelize) => {
       primaryKey: true,
     },
     lastMessage: {
-      type: DataTypes.STRING,
-    },
-    lastMessageUser: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "Messages",
+        key: "id",
+      },
     },
     msgTotal: {
       type: DataTypes.INTEGER,
@@ -20,3 +22,6 @@ export default (database: Sequelize) => {
     },
   });
 };
+// lastMessageUser: {
+//   type: DataTypes.STRING,
+// },

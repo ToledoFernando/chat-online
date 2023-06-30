@@ -26,7 +26,6 @@ function ChatCard({ chatCard }: { chatCard: IChat }) {
       setTo(chatCard.user1);
     }
   }, []);
-
   return (
     to && (
       <>

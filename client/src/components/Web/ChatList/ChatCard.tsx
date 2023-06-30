@@ -33,7 +33,10 @@ function ChatCard({ chatCard }: { chatCard: IChat }) {
           onClick={() => navigate(`?ch=${to.id}`)}
           className="w-ful flex relative items-center gap-2 px-2 py-3 h-14 hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all"
         >
-          <div>
+          <div className="relative">
+            {to.connected == "online" && (
+              <span className="w-2 h-2 bg-green-600 absolute block top-0 right-0 rounded-full"></span>
+            )}
             <img
               src={to.profileIMG.length > 0 ? to.profileIMG : "/user-icon.svg"}
               alt={`${to.username} avatar`}

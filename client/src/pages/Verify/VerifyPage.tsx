@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import userStore from "../../store/userStore/userStore";
 import { toast } from "react-toastify";
 import UserVerify from "../../components/verify/UserVeriy";
@@ -22,7 +22,7 @@ function VerifyPage() {
           } else toast.success(response.response);
           setLoad(false);
         })
-        .catch((error: unknown | any) => {
+        .catch(() => {
           setError(true);
           toast.error("Ocurri un error al realizar la peticion.");
           setLoad(false);

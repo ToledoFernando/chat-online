@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { IMensajes, IUser, IUsersChat, IWebStore } from "./webStoreTypes";
+import {
+  IChat,
+  IMensajes,
+  IUser,
+  IUsersChat,
+  IWebStore,
+} from "./webStoreTypes";
 import sendRequest from "../http/sendRequest";
 import jscookie from "js-cookie";
 
@@ -79,6 +85,53 @@ const webStore = create<IWebStore>((set) => ({
   },
 
   clearMessages: () => set({ messages: [] }),
+
+  newUserConnected: (user: IUser, myAcount: string) => {
+    set((state: IWebStore) => {
+      let chats = [...state.chats];
+      for (let i = 0; i < state.chats.length; i++) {
+        if (chats[i].user1.id != myAcount && chats[i].user1.id == user.id) {
+          chats[i].user1.connected = "online";
+          break;
+        } else if (
+          chats[i].user2.id != myAcount &&
+          chats[i].user2.id == user.id
+        ) {
+          chats[i].user2.connected = "online";
+          break;
+        }
+      }
+
+      if (state.chatActual.id == user.id) {
+        state.chatActual.connected = "online";
+        return { chats: chats, chatActual: state.chatActual };
+      } else {
+        return { chats: chats };
+      }
+    });
+  },
+  newUserDisconnected: (user: IUser, myAcount: string) => {
+    set((state: IWebStore) => {
+      let chats = [...state.chats];
+      for (let i = 0; i < state.chats.length; i++) {
+        if (chats[i].user1.id != myAcount && chats[i].user1.id == user.id) {
+          chats[i].user1.connected = "offline";
+          break;
+        } else if (
+          chats[i].user2.id != myAcount &&
+          chats[i].user2.id == user.id
+        ) {
+          chats[i].user2.connected = "offline";
+          break;
+        }
+      }
+      if (state.chatActual.id == user.id) {
+        state.chatActual.connected = "offline";
+        return { chats: chats, chatActual: state.chatActual };
+      }
+      return { chats: chats };
+    });
+  },
 }));
 
 export default webStore;

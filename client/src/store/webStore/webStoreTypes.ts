@@ -85,4 +85,8 @@ export interface IWebStore {
   setNewMessage: (msg: IMensajes) => void;
 
   clearMessages: () => void;
+
+  newUserConnected: (userConnected: IUser, myID: string) => void;
+
+  newUserDisconnected: (userConnected: IUser, myID: string) => void;
 }

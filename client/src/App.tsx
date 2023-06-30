@@ -12,12 +12,14 @@ import userStore from "./store/userStore/userStore";
 import RoutesWeb from "./pages/PagesUsers/RoutesWeb";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import webStore from "./store/webStore/webStore";
 
 export const socket = io("http://localhost:4000");
 
 function App() {
   const navigate = useNavigate();
   const userData = userStore((state) => state);
+  const webData = webStore((state) => state);
 
   useEffect(() => {
     userData.checkUserLogin();
@@ -34,6 +36,17 @@ function App() {
       userData.setCookieUser(data)
     );
   }, []);
+
+  useEffect(() => {
+    if (userData.id) {
+      socket.on("new-user-connected", (data) =>
+        webData.newUserConnected(data, userData.id as string)
+      );
+      socket.on("new-user-disconnected", (data) =>
+        webData.newUserDisconnected(data, userData.id as string)
+      );
+    }
+  }, [userData.id]);
 
   return (
     <>

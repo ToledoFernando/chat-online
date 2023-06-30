@@ -1,11 +1,14 @@
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatComponent from "./ChatComponent";
 import webStore from "../../../store/webStore/webStore";
+import { IUser } from "../../../store/webStore/webStoreTypes";
 
 function Chat() {
   const navigate = useNavigate();
   const { search } = useLocation();
   const webData = webStore((state) => state);
+  const [userAct, setUserAct] = useState<IUser>();
 
   const changeName = (name: string): string => {
     let nombres = name.split(" ");
@@ -44,12 +47,12 @@ function Chat() {
     return resultado;
   };
 
-  // useEffect(() => {
-  //   if (search) {
-  //     return console.log("Se abrio un chat");
-  //   }
-  //   return console.log("Sin chat abierto");
-  // }, [search]);
+  useEffect(() => {
+    if (search) {
+      return setUserAct(webData.chatActual);
+    }
+    return console.log("Sin chat abierto");
+  }, [search]);
 
   return (
     <div className="h-full w-6/12 relative border-x-2 border-gray-300">

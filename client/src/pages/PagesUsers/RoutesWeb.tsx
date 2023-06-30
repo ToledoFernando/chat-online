@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import jsCoockie from "js-cookie";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import userStore from "../../store/userStore/userStore";
+// import userStore from "../../store/userStore/userStore";
 import Web from "./Home/Web";
 
 function RoutesWeb() {
   const navigate = useNavigate();
 
-  const userData = userStore((state) => state);
+  // const userData = userStore((state) => state);
 
   useEffect(() => {
     const token = jsCoockie.get("user_token");

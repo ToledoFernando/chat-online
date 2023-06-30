@@ -15,7 +15,7 @@ function ChatComponent() {
   const webData = webStore((state) => state);
   const [chatID, setChatID] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [mensajesHistorial, setMensajesHistorial] = useState<IMensajes[]>([]);
+  // const [_, setMensajesHistorial] = useState<IMensajes[]>([]);
 
   const sendMessage: FormEventHandler = (e) => {
     e.preventDefault();
@@ -75,9 +75,9 @@ function ChatComponent() {
       const token = jscookie.get("user_token") as string;
       webData
         .getMessages(chatID, token)
-        .then((response) => {
-          setMensajesHistorial(response.response);
-        })
+        // .then((response) => {
+        //   setMensajesHistorial(response.response);
+        // })
         .catch((err: unknown | any) => toast.error(err.message));
     }
 

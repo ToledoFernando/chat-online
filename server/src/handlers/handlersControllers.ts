@@ -68,7 +68,8 @@ export const userConnected = async (
         // para saber que usuario esta online
         io.to(chatsAll[i].user1.socketId).emit(
           "new-user-connected",
-          chatsAll[i].user1.id
+          chatsAll[i].user2
+          // chatsAll[i].user1.id
         );
       else if (
         chatsAll[i].user2.id != userID &&
@@ -77,7 +78,7 @@ export const userConnected = async (
         // para saber que usuario esta online
         io.to(chatsAll[i].user2.socketId).emit(
           "new-user-connected",
-          chatsAll[i].user2.id
+          chatsAll[i].user1
         );
     }
     console.log("#####################################");
@@ -142,7 +143,7 @@ export const userDisconnected = async (
 ) => {
   const t = await database.transaction();
   try {
-    const user = await Users.findOne({
+    const user: any = await Users.findOne({
       where: { socketId: socket.id },
       transaction: t,
     });
@@ -156,6 +157,55 @@ export const userDisconnected = async (
       },
       { transaction: t }
     );
+
+    console.log("#####################################");
+    const chatsAll: any = await Chats.findAll({
+      where: {
+        [Op.or]: [{ userId1: user.id }, { userId2: user.id }],
+      },
+      include: [
+        {
+          model: Users,
+          as: "user1",
+          attributes: {
+            exclude: ["password", "listUseLock", "updatedAt", "createdAt"],
+          },
+        },
+        {
+          model: Users,
+          as: "user2",
+          attributes: {
+            exclude: ["password", "listUseLock", "updatedAt", "createdAt"],
+          },
+        },
+      ],
+      transaction: t,
+    });
+
+    for (let i = 0; i < chatsAll.length; i++) {
+      if (
+        chatsAll[i].user1.id != user.id &&
+        chatsAll[i].user1.connected == "online"
+      )
+        // para saber que usuario esta online
+        io.to(chatsAll[i].user1.socketId).emit(
+          "new-user-disconnected",
+          chatsAll[i].user2
+          // chatsAll[i].user1.id
+        );
+      else if (
+        chatsAll[i].user2.id != user.id &&
+        chatsAll[i].user2.connected == "online"
+      )
+        // para saber que usuario esta online
+        io.to(chatsAll[i].user2.socketId).emit(
+          "new-user-disconnected",
+          chatsAll[i].user1
+          // chatsAll[i].user2.id
+        );
+    }
+    console.log("#####################################");
+
     await t.commit();
     io.to(socket.id).emit("user-disconnected");
   } catch (error) {

@@ -14,8 +14,8 @@ app.use(route);
 
 serverHttp.listen(4000, async () => {
   try {
-    const mongoDB = await mongoConn();
-    console.log(mongoDB);
+    // const mongoDB = await mongoConn();
+    // console.log(mongoDB);
     await database.sync({ force: true });
     // await database.sync();
 
@@ -48,6 +48,40 @@ serverHttp.listen(4000, async () => {
       lastName: "toledo",
       username: "xdxdxdddd",
       email: "123@gmail.com",
+      password: "$2a$10$WFc9cRyx5.j5kA.vXqwayOjQN1BAXiV9YexQFWF7G6iprEIuUZ0HO",
+      profileIMG: "",
+      verify: true,
+      connected: "offline",
+      lastConnection: 1688106084,
+      banned: false,
+      listUseLock: [],
+      socketId: "",
+      RolId: "915e22b1-3fa2-4804-b8d2-2c1d170fdf84",
+    });
+
+    await database.models.Users.create({
+      id: "954a2308-8d0f-4791-bb0a-6dac5b33d054",
+      firstName: "ferchu",
+      lastName: "xdxd",
+      username: "toledo.dev",
+      email: "12345@gmail.com",
+      password: "$2a$10$WFc9cRyx5.j5kA.vXqwayOjQN1BAXiV9YexQFWF7G6iprEIuUZ0HO",
+      profileIMG: "",
+      verify: true,
+      connected: "offline",
+      lastConnection: 1688106084,
+      banned: false,
+      listUseLock: [],
+      socketId: "",
+      RolId: "915e22b1-3fa2-4804-b8d2-2c1d170fdf84",
+    });
+
+    await database.models.Users.create({
+      id: "954a2308-8d0f-4791-bb0a-6dac5b33d056",
+      firstName: "fernando2",
+      lastName: "toledo2",
+      username: "toledo",
+      email: "1234@gmail.com",
       password: "$2a$10$WFc9cRyx5.j5kA.vXqwayOjQN1BAXiV9YexQFWF7G6iprEIuUZ0HO",
       profileIMG: "",
       verify: true,
